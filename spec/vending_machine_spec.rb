@@ -13,14 +13,14 @@ describe VendingMachine do
         @vm.insert(100)
         @vm.insert(500)
         @vm.insert(1000)
-        total_coin = @vm.total
+        total_coin = @vm.inserted_coin
         expect(total_coin).to eq (1660)
     end
 
     it 'refunds total coin' do
         @vm.insert(100)
         @vm.insert(100)
-        total_coin = @vm.total
+        total_coin = @vm.inserted_coin
         refunds_coin = @vm.refund
         expect(refunds_coin).to eq (total_coin)
     end
@@ -44,13 +44,13 @@ describe VendingMachine do
         expect(@vm.insert(100)).to eq nil
         expect(@vm.insert(500)).to eq nil
         expect(@vm.insert(1000)).to eq nil
-        expect(@vm.total).to eq 1660
+        expect(@vm.inserted_coin).to eq 1660
 
         expect(@vm.insert(10000)).to eq 10000
         expect(@vm.insert(1)).to eq 1
         expect(@vm.insert(5)).to eq 5
         expect(@vm.insert(-1)).to eq(-1)
-        expect(@vm.total).to eq 1660
+        expect(@vm.inserted_coin).to eq 1660
     end
   end
   context 'STEP2' do
@@ -82,7 +82,14 @@ describe VendingMachine do
           {:price=>120,:name=>'cola'}
         ]
         expect(@vm.sales).to eq (120)
+        expect(@vm.refund).to eq (90)
       end
+    end
+    it 'purchase Cola but short of money' do
+      @vm.insert(100)
+      drink = @vm.purchase('cola')
+      expect(drink).to be_nil
+      expect(@vm.refund).to eq (100)
     end
   end
 end
