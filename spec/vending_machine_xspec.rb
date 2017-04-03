@@ -72,7 +72,9 @@ describe VendingMachine do
   end
   context 'STEP3' do
     it 'purchase Cola then put out from stock ' do
-      @vm.insert(120)
+      @vm.insert(10)
+      @vm.insert(10)
+      @vm.insert(100)
       drink = @vm.purchase('cola')
       if drink != nil
         expect(@vm.stocks).to eq [
@@ -91,5 +93,21 @@ describe VendingMachine do
       expect(drink).to be_nil
       expect(@vm.refund).to eq (100)
     end
+    it 'purchase Cola by many coin then refund ' do
+      @vm.insert(100)
+      @vm.insert(100)
+      drink = @vm.purchase('cola')
+      if drink != nil
+        expect(@vm.stocks).to eq [
+          {:price=>120,:name=>'cola'},
+          {:price=>120,:name=>'cola'},
+          {:price=>120,:name=>'cola'},
+          {:price=>120,:name=>'cola'}
+        ]
+        expect(@vm.sales).to eq (120)
+        expect(@vm.refund).to eq (80)
+      end
+    end
+
   end
 end
