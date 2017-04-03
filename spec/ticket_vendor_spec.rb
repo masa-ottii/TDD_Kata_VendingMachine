@@ -20,6 +20,12 @@ RSpec.describe 'TicketVendor' do
     end
   end
   context 'step2' do
+    it 'チケット名を指定して購入する。投入金額が足りる場合はチケットの情報が手に入る' do
+      vendor.insert(50)
+      vendor.insert(100)
+      vendor.insert(100)
+      vendor.purchase('チケットA')
+    end
 
   end
   context 'step3' do
