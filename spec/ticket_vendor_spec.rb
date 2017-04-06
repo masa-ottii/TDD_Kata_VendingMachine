@@ -20,15 +20,51 @@ RSpec.describe 'TicketVendor' do
     end
   end
   context 'step2' do
+    it 'おつりの返金を行うと、その時点での投入金額分のお金が返される。' do
+      vendor.insert(100)
+      vendor.insert(100)
+      vendor.insert(100)
+      expect(vendor.refund).to eq(300)
+    end
+    it 'おつりの返金を行うと、投入金額は0になっている' do
+      vendor.insert(1000)
+      r = vendor.refund
+      expect(r).to eq(1000)
+      expect(vendor.inserted_money).to eq(0)
+    end
+  end
+  context 'step3' do
     it 'チケット名を指定して購入する。投入金額が足りる場合はチケットの情報が手に入る' do
       vendor.insert(50)
       vendor.insert(100)
       vendor.insert(100)
-      vendor.purchase('チケットA')
+      ticket = vendor.purchase('Aチケット')
+
+      expect(ticket[:name]).to eq('Aチケット')
+      expect(vendor.inserted_money).to eq(0)
     end
+    it 'チケット名を指定して購入する。該当するチケットがない場合はnilが返される' do
+      vendor.insert(50)
+      vendor.insert(100)
+      vendor.insert(100)
+      ticket = vendor.purchase('存在しないチケット')
 
-  end
-  context 'step3' do
+      expect(ticket).to eq nil
+      expect(vendor.inserted_money).to eq(250)
+    end
+    it 'チケット名を指定して購入する。投入金額が足りない場合はnilが返される' do
+      vendor.insert(50)
+      ticket = vendor.purchase('Aチケット')
 
+      expect(ticket).to eq nil
+      expect(vendor.inserted_money).to eq(50)
+    end
+    it '多めにお金を入れてチケットを購入すると、投入金額にはあまりのお金が残っている' do
+      vendor.insert(1000)
+      ticket = vendor.purchase('Aチケット')
+
+      expect(ticket[:name]).to eq('Aチケット')
+      expect(vendor.inserted_money).to eq(750)
+    end
   end
 end
